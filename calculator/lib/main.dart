@@ -72,11 +72,16 @@ class _CalculatorState extends State<Calculator> {
       val = "0";
       isEqualOp = false;
     }
-    if(x=="0" && aktualna=="0"){ return; }
+    if(x=="0" && (aktualna=="0" || aktualna=="-0")){ return; }
     if(x=="." && aktualna.contains(".")){ return; }
     setState(() {
-      if(aktualna == "0"){
-        aktualna = x;
+      if(aktualna == "0" || aktualna=="-0"){
+        if(aktualna[0] == "-"){
+          aktualna = "-$x";
+        }
+        else{
+          aktualna = x;
+        }
         if(val[val.length-1] == "0"){
           val = val.substring(0,val.length-1) + x;
         }
@@ -99,7 +104,7 @@ class _CalculatorState extends State<Calculator> {
       equal = "= 0";
       isEqualOp = false;
     }
-
+    
     if(wyrazPrev!=""){
       onp.addWyraz(wyrazPrev);
     }
@@ -147,7 +152,8 @@ class _CalculatorState extends State<Calculator> {
     });
   }
 
-  void historyBtn(BuildContext context){
+  void historyBtn(){
+    
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -156,6 +162,19 @@ class _CalculatorState extends State<Calculator> {
         )
       )
     );
+  }
+
+  void changeSign(){
+    if(aktualna[0] == "-"){
+      aktualna = aktualna.substring(1);
+    }
+    else{
+      aktualna = "-$aktualna";
+    }
+    int nextNumPos = val.lastIndexOf(' ');
+    setState((){
+      val = val.substring(0,nextNumPos+1) + aktualna;
+    });
   }
 
   Flexible fullSizeButton({
@@ -217,15 +236,13 @@ class _CalculatorState extends State<Calculator> {
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
                 color: const Color.fromARGB(255, 21, 21, 21)
               ),
-              child: Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(val, style: const TextStyle(fontSize: 25, color: Colors.white60)),
-                    const SizedBox(height: 20,),
-                    Text(equal, style: const TextStyle(fontSize: 35, color: Colors.white)),
-                  ],
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(val, style: const TextStyle(fontSize: 25, color: Colors.white60)),
+                  const SizedBox(height: 20,),
+                  Text(equal, style: const TextStyle(fontSize: 35, color: Colors.white)),
+                ],
               ),
             ),
             SizedBox(
@@ -249,7 +266,7 @@ class _CalculatorState extends State<Calculator> {
                   const SizedBox(width: 10,),
                   fullSizeButton(
                     text: 'His',
-                    onPressed: (){ historyBtn(context); }
+                    onPressed: (){ historyBtn(); }
                   )
                 ],
               ),
@@ -325,10 +342,28 @@ class _CalculatorState extends State<Calculator> {
                           ),
                         ),
                         const SizedBox(width: 10,),
-                        fullSizeButton(
-                          text: '+', 
-                          onPressed: (){ dodajWyraz("+"); }
-                        ),
+                        Flexible(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 40,
+                                child: Column(
+                                  children: [
+                                    fullSizeButton(
+                                      text: '+/-',
+                                      onPressed: (){ changeSign(); }
+                                    ),
+                                  ]
+                                ),
+                              ),
+                              const SizedBox(height: 10,),
+                              fullSizeButton(
+                                text: '+', 
+                                onPressed: (){ dodajWyraz("+"); }
+                              ),
+                            ],
+                          ),
+                        )
                       ],
                     )
                   )
