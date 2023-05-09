@@ -20,6 +20,7 @@ class _MainAppState extends State<MainApp> {
   String aktualna = "0";
   bool isEqualOp = false;
   String equalTemp = "";
+  String wyrazPrev = "";
 
   Onp onp = Onp();
 
@@ -65,29 +66,16 @@ class _MainAppState extends State<MainApp> {
       isEqualOp = false;
     }
 
+    if(wyrazPrev!=""){
+      onp.addWyraz(wyrazPrev);
+    }
     onp.addNumber(double.parse(aktualna));
-    onp.addWyraz(x);
+    wyrazPrev = x;
 
-    liczby.add(double.parse(aktualna));
-    operacje.add(x);
     aktualna = "0";
     setState(() {
       val += " $x 0";
-      double first = double.parse(equal.substring(2));
-      double second = liczby.last;
-      late double wynik;
-      if(operacje.length>1){
-        switch (operacje[operacje.length-2]) {
-          case "+": wynik = first+second; break;
-          case "-": wynik = first-second; break;
-          case "*": wynik = first*second; break;
-          case "/": wynik = first/second; break;
-          case "^": wynik = pow(first, second) as double; break;
-        }
-      }
-      else{
-        wynik = liczby.last;
-      }
+      double wynik = onp.wylicz();
       equal = "= ${wynik.toString()}";
     });
   }
@@ -99,28 +87,18 @@ class _MainAppState extends State<MainApp> {
     }
     isEqualOp = true;
 
+    if(wyrazPrev != ""){
+      onp.addWyraz(wyrazPrev);
+    }
     onp.addNumber(double.parse(aktualna));
-    onp.equal();
 
-    liczby.add(double.parse(aktualna));
-    late double wynik;
     setState(() {
-      double first = double.parse(equal.substring(2));
-      double second = liczby.last;
-      if(operacje.isNotEmpty){
-        switch (operacje.last) {
-          case "+": wynik = first+second; break;
-          case "-": wynik = first-second; break;
-          case "*": wynik = first*second; break;
-          case "/": wynik = first/second; break;
-          case "^": wynik = pow(first, second) as double; break;
-        }
-      }
-      else{
-        wynik = liczby.last;
-      }
+      double wynik = onp.wylicz();
       equal = "= ${wynik.toString()}";
     });
+
+    onp.reset();
+    wyrazPrev = "";
   }
 
   void konwert(int typ){
