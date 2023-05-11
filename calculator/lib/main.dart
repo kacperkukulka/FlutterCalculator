@@ -12,9 +12,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Calculator',
-      home: Calculator(),
+      theme: ThemeData(
+        primarySwatch: Colors.grey
+      ),
+      home: const Calculator(),
     );
   }
 }
@@ -60,7 +63,7 @@ class _CalculatorState extends State<Calculator> {
   Onp onp = Onp();
 
   List<String> history = List.empty(growable: true);
-
+  
   void dodajCyfre(String x){
     if(equalTemp!=""){
       equal = equalTemp;
@@ -239,9 +242,70 @@ class _CalculatorState extends State<Calculator> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(val, style: const TextStyle(fontSize: 25, color: Colors.white60)),
-                  const SizedBox(height: 20,),
-                  Text(equal, style: const TextStyle(fontSize: 35, color: Colors.white)),
+                  SizedBox(
+                    height: 60, // set the height to your desired value
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: SingleChildScrollView(
+                            reverse: true,
+                            child: Text(
+                                val, 
+                                style: const TextStyle(fontSize: 25, color: Colors.white60), 
+                                textAlign: TextAlign.end,
+                              ),
+                          ),
+                        ),                
+                        Container(
+                          height: 30,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                const Color.fromARGB(255, 21, 21, 21),
+                                const Color.fromARGB(255, 21, 21, 21).withOpacity(0)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ), 
+                  SizedBox(
+                    height: 100, // set the height to your desired value
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: SingleChildScrollView(
+                            reverse: true,
+                            child: Text(
+                                equal, 
+                                style: const TextStyle(fontSize: 35, color: Colors.white), 
+                                textAlign: TextAlign.end,
+                              ),
+                          ),
+                        ),         
+                        Container(
+                          height: 20,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                const Color.fromARGB(255, 21, 21, 21),
+                                const Color.fromARGB(255, 21, 21, 21).withOpacity(0)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
